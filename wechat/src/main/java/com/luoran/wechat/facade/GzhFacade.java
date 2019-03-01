@@ -1,18 +1,5 @@
 package com.luoran.wechat.facade;
 
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +70,7 @@ public class GzhFacade implements WxConstant {
 	 * @return
 	 */
 	public String getUserInfo(String OpenId) {
+		refreshToken();
 		String url = GzhGetUserInfo.replaceAll("\\$\\{ACCESS_TOKEN\\}", wechatCache.getGzhAccessToken());
 		url = url.replaceAll("\\$\\{OPENID\\}", OpenId);
 		try {

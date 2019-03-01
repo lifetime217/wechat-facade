@@ -46,4 +46,9 @@ public interface WxConstant {
 	 * 通过 wx.login() 接口获得临时登录凭证 code 后传到开发者服务器调用此接口完成登录流程
 	 */
 	public String XcxCode2Session = "https://api.weixin.qq.com/sns/jscode2session?appid=${APPID}&secret=${SECRET}&js_code=${JSCODE}&grant_type=authorization_code";
+	
+	/**
+	 * 获取微信用户基本信息
+	 */
+	public String GzhGetUserInfo = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=${ACCESS_TOKEN}&openid=${OPENID}&lang=zh_CN";
 }

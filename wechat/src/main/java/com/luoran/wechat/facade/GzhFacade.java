@@ -1,5 +1,18 @@
 package com.luoran.wechat.facade;
 
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +55,7 @@ public class GzhFacade implements WxConstant {
 			String res = Http.get(url);
 			wechatCache.setGzhAccessTokenResult(res);
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e.getMessage(), e.getCause());
 		}
 	}
@@ -49,10 +63,8 @@ public class GzhFacade implements WxConstant {
 	/**
 	 * 发送模板消息
 	 * 
-	 * @param msgId
-	 *            模板消息的id
-	 * @param json
-	 *            模板消息的内容
+	 * @param msgId 模板消息的id
+	 * @param json  模板消息的内容
 	 * @return
 	 */
 	public String sendTemplateMsg(String msgId, String json) {
@@ -65,5 +77,23 @@ public class GzhFacade implements WxConstant {
 			return null;
 		}
 	}
-
+	/**
+	 * 
+	 * @param OpenId 基于用户openid 和 accesstoen获取用户的基本信息
+	 * @return
+	 */
+	public String getUserInfo(String OpenId) {
+		String url = GzhGetUserInfo.replaceAll("\\$\\{ACCESS_TOKEN\\}", wechatCache.getGzhAccessToken());
+		url = url.replaceAll("\\$\\{OPENID\\}", OpenId);
+		try {
+			String  res = Http.get(url);
+			System.out.println("获取用户基本信息成功");
+			return res;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e.getCause());
+			return null;
+		}
+		
+	}
+	
 }

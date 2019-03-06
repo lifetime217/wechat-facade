@@ -23,8 +23,6 @@ public interface WxConstant {
 	 */
 	public String GzhSendTemplateMsg = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=${ACCESS_TOKEN}";
 
-	
-	
 	/**
 	 * 获取网页授权接口调用凭证
 	 */
@@ -40,13 +38,16 @@ public interface WxConstant {
 	 */
 	public String WebJSSDKTicket = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${ACCESS_TOKEN}&type=jsapi";
 
-	
-	
 	/**
 	 * 通过 wx.login() 接口获得临时登录凭证 code 后传到开发者服务器调用此接口完成登录流程
 	 */
 	public String XcxCode2Session = "https://api.weixin.qq.com/sns/jscode2session?appid=${APPID}&secret=${SECRET}&js_code=${JSCODE}&grant_type=authorization_code";
-	
+
+	/**
+	 * 获取小程序的二维码图片 返回的是一张图片
+	 */
+	public String XcxGetWXACodeUnlimit = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=${ACCESS_TOKEN}";
+
 	/**
 	 * 获取微信用户基本信息
 	 */

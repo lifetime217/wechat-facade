@@ -4,8 +4,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +30,24 @@ public class GetOpenId {
 
 	@Autowired
 	private WebFacade webFacade;
-	
+
 	@Value("${weixin.appid}")
 	private String appid;
 
-	@Before("within(@org.springframework.stereotype.Controller *) && @annotation(com.luoran.wechat.anno.OpenId)")
-	public void getOpenId() {
+	@Around("within(@org.springframework.stereotype.Controller *) && @annotation(com.luoran.wechat.anno.OpenId)")
+	public Object getOpenId(ProceedingJoinPoint pjp) throws Throwable {
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = attributes.getRequest();
 		HttpServletResponse response = attributes.getResponse();
 		String openId = getCookieValue(request, appid + "open_id");
 		if (StringUtils.isEmpty(openId)) {
 			if (StringUtils.isEmpty(request.getParameter("code"))) {
-				logger.error("未能获取到微信网页授权时的code，请检查url是否转化过。转化方法见：WeixinUtil.urlConvert()");
-				return;
+				logger.error("未能获取到微信网页授权时的code，请检查url是否转化过。转化方法见：WeixinUtil.urlConvert() : " + request.getRequestURL());
+				if (request.getRequestURL() != null) {
+					String url = webFacade.urlConvert(request.getRequestURL().toString());
+					response.sendRedirect(url.toString());
+				}
+				return null;
 			}
 			JSONObject res = webFacade.refreshJsToken(request.getParameter("code"));
 			if (res != null) {
@@ -55,7 +60,7 @@ public class GetOpenId {
 		} else {
 			request.setAttribute(appid + "open_id", openId);
 		}
-
+		return pjp.proceed();
 	}
 
 	String getCookieValue(HttpServletRequest request, String key) {

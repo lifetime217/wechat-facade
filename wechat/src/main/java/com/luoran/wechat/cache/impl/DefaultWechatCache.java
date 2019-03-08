@@ -36,8 +36,13 @@ public class DefaultWechatCache implements IWechatCache {
 	private long jsapiTicketExpireTime;
 	private long jsapiTicketLastupdateTime;
 	private String jsapiResult;
-	
+
 	private Map<String, String> xcxSessionCache = new ConcurrentHashMap<String, String>();
+
+	private String xcxAccessToken;
+	private long xcxAccessTokenExpireTime;
+	private long xcxAccessTokenLastupdateTime;
+	private String xcxAccessTokenResult;
 
 	private File synFile;
 	private Timer timer;
@@ -203,7 +208,8 @@ public class DefaultWechatCache implements IWechatCache {
 
 	@Override
 	public String toString() {
-		return new StringBuilder().append(timer.toString()).append(getSynPeriod()).append("\n").append(configString()).toString();
+		return new StringBuilder().append(timer.toString()).append(getSynPeriod()).append("\n").append(configString())
+				.toString();
 	}
 
 	public String configString() {
@@ -227,4 +233,55 @@ public class DefaultWechatCache implements IWechatCache {
 		return xcxSessionCache.get(sessionKey);
 	}
 
+	public String getXcxAccessToken() {
+		return xcxAccessToken;
+	}
+
+	public void setXcxAccessToken(String xcxAccessToken) {
+		this.xcxAccessToken = xcxAccessToken;
+	}
+
+	public long getXcxAccessTokenExpireTime() {
+		return xcxAccessTokenExpireTime;
+	}
+
+	public void setXcxAccessTokenExpireTime(long xcxAccessTokenExpireTime) {
+		this.xcxAccessTokenExpireTime = xcxAccessTokenExpireTime;
+	}
+
+	public long getXcxAccessTokenLastupdateTime() {
+		return xcxAccessTokenLastupdateTime;
+	}
+
+	public void setXcxAccessTokenLastupdateTime(long xcxAccessTokenLastupdateTime) {
+		this.xcxAccessTokenLastupdateTime = xcxAccessTokenLastupdateTime;
+	}
+
+	public String getXcxAccessTokenResult() {
+		return xcxAccessTokenResult;
+	}
+
+	/**
+	 * 赋值accessToken的返回值并且设置过期时间
+	 */
+	public void setXcxAccessTokenResult(String xcxAccessTokenResult) {
+		this.xcxAccessTokenResult = xcxAccessTokenResult;
+		JSONObject obj = JSONObject.parseObject(xcxAccessTokenResult);
+		if (obj.getString("access_token") != null) {
+			setGzhAccessToken(obj.getString("access_token"));
+			setGzhAccessTokenExpireTime(obj.getInteger("expires_in") - 300);// 主动让accessToken提前5分钟过期
+			setGzhAccessTokenLastupdateTime(System.currentTimeMillis() / 1000);
+		} else {
+			logger.error("获取小程序AccessToken失败：{} ", xcxAccessTokenResult);
+		}
+	}
+
+	/**
+	 * 验证小程序的access_token的时间
+	 */
+	@Override
+	public boolean isValidXcxAccessToken() {
+		// TODO Auto-generated method stub
+		return (System.currentTimeMillis() / 1000 - getXcxAccessTokenLastupdateTime()) < getXcxAccessTokenExpireTime();
+	}
 }

@@ -29,19 +29,40 @@ public class XcxFacade implements WxConstant {
 	private Environment env;
 
 	/**
+	 * 获取微信小程序token
+	 * 
+	 * @return
+	 */
+	public void refreshToken() {
+		if (wechatCache.isValidXcxAccessToken()) {
+			// 未过期，不刷新
+			return;
+		}
+		String url = Base_GetToken.replaceAll("\\$\\{APPID\\}", env.getProperty("mini.appid"));
+		url = url.replaceAll("\\$\\{SECRET\\}", env.getProperty("mini.appsecret"));
+		try {
+			String res = Http.get(url);
+			wechatCache.setXcxAccessTokenResult(res);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(), e.getCause());
+		}
+	}
+
+	/**
 	 * 小程序code转session
 	 * 
 	 * @param jsCode
 	 * @return 返回用户侧的sessionId
 	 */
 	public String code2Session(String jsCode) {
-		String url = XcxCode2Session.replaceAll("\\$\\{APPID\\}", env.getProperty("weixin.appid"));
-		url = XcxCode2Session.replaceAll("\\$\\{SECRET\\}", env.getProperty("weixin.secret"));
-		url = XcxCode2Session.replaceAll("\\$\\{JSCODE\\}", jsCode);
+		String url = XcxCode2Session.replaceAll("\\$\\{APPID\\}", env.getProperty("mini.appid"));
+		url = url.replaceAll("\\$\\{SECRET\\}", env.getProperty("mini.appsecret"));
+		url = url.replaceAll("\\$\\{JSCODE\\}", jsCode);
 		try {
 			String msg = Http.get(url);
 			JSONObject obj = JSONObject.parseObject(msg);
-			if (obj.getInteger("errcode") == 0) {
+			if (!obj.containsKey("errcode")) {
 				String sessionKey = MD5.md5(obj.getString("openid"));
 				wechatCache.putXcxSessionKey(sessionKey, msg);
 				return sessionKey;

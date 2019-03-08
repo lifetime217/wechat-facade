@@ -160,5 +160,20 @@ public interface IWechatCache extends InitializingBean {
 	 * @return
 	 */
 	public String getXcxSessionString(String sessionKey);
+	
+	/**
+	 * 是否是有效的小程序全局accessToken
+	 * 
+	 * @return
+	 */
+	public boolean isValidXcxAccessToken();
+	
+	/**
+	 * 设置接口获取小程序accessToken时微信返回的结果字符串
+	 * 
+	 * @param gzhResult
+	 */
+	public void setXcxAccessTokenResult(String gzhResult);
+
 
 }

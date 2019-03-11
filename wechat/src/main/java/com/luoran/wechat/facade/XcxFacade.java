@@ -55,17 +55,20 @@ public class XcxFacade implements WxConstant {
 	 * @param jsCode
 	 * @return 返回用户侧的sessionId
 	 */
-	public String code2Session(String jsCode) {
+	public JSONObject code2Session(String jsCode) {
 		String url = XcxCode2Session.replaceAll("\\$\\{APPID\\}", env.getProperty("mini.appid"));
 		url = url.replaceAll("\\$\\{SECRET\\}", env.getProperty("mini.appsecret"));
 		url = url.replaceAll("\\$\\{JSCODE\\}", jsCode);
+		JSONObject res = new JSONObject();
 		try {
 			String msg = Http.get(url);
 			JSONObject obj = JSONObject.parseObject(msg);
 			if (!obj.containsKey("errcode")) {
 				String sessionKey = MD5.md5(obj.getString("openid"));
 				wechatCache.putXcxSessionKey(sessionKey, msg);
-				return sessionKey;
+				res.put("sessionKey", sessionKey);
+				res.put("openid",obj.getString("openid"));
+				return res;
 			} else {
 				logger.error("小程序Session获取失败：{}", msg);
 				return null;

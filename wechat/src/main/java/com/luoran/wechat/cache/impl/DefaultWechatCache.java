@@ -268,9 +268,9 @@ public class DefaultWechatCache implements IWechatCache {
 		this.xcxAccessTokenResult = xcxAccessTokenResult;
 		JSONObject obj = JSONObject.parseObject(xcxAccessTokenResult);
 		if (obj.getString("access_token") != null) {
-			setGzhAccessToken(obj.getString("access_token"));
-			setGzhAccessTokenExpireTime(obj.getInteger("expires_in") - 300);// 主动让accessToken提前5分钟过期
-			setGzhAccessTokenLastupdateTime(System.currentTimeMillis() / 1000);
+			setXcxAccessToken(obj.getString("access_token"));
+			setXcxAccessTokenExpireTime(obj.getInteger("expires_in") - 300);// 主动让accessToken提前5分钟过期
+			setXcxAccessTokenLastupdateTime(System.currentTimeMillis() / 1000);
 		} else {
 			logger.error("获取小程序AccessToken失败：{} ", xcxAccessTokenResult);
 		}

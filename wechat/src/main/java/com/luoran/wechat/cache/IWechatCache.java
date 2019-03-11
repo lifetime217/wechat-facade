@@ -169,11 +169,18 @@ public interface IWechatCache extends InitializingBean {
 	public boolean isValidXcxAccessToken();
 	
 	/**
-	 * 设置接口获取小程序accessToken时微信返回的结果字符串
+	 * 设置接口赋值小程序accessToken时微信返回的结果字符串
 	 * 
 	 * @param gzhResult
 	 */
 	public void setXcxAccessTokenResult(String gzhResult);
+	
+	/**
+	 * 接口获取小程序accessToken时微信返回的结果字符串
+	 * 
+	 * @return
+	 */
+	public String getXcxAccessTokenResult();
 
 
 }

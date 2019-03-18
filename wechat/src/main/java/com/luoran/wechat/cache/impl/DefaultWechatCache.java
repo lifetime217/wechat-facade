@@ -281,7 +281,6 @@ public class DefaultWechatCache implements IWechatCache {
 	 */
 	@Override
 	public boolean isValidXcxAccessToken() {
-		// TODO Auto-generated method stub
 		return (System.currentTimeMillis() / 1000 - getXcxAccessTokenLastupdateTime()) < getXcxAccessTokenExpireTime();
 	}
 }

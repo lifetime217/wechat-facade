@@ -61,7 +61,7 @@
 						<phase>package</phase>
 						<configuration>
 							<tasks>
-								<copy todir="E:\git\xining\src\main\resources\lib">
+								<copy todir="E:\maven\repository\com\luoran\wechat\0.0.1">
 									<fileset dir="D:\common-git\wechat-facade\wechat\target">
 										<include name="*.jar" />
 									</fileset>
